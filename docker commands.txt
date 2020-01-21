@@ -1,0 +1,128 @@
+Docker images
+-------------
+docker search python:3.6
+docker search --filter "is-official=true" registry
+docker search --format "table {{.Name}}\t{{.Description}}\t{{.IsOfficial}}" python
+docker search --filter "is-official=true" --format "table {{.Name}}\t{{.Description}}\t{{.IsOfficial}}" python
+docker images image_name
+
+docker image pull nginx:latest
+docker image pull --all-tags nginx
+docker image history ubuntu
+
+docker image rm nginx
+docker rmi image_id
+docker rmi image_id --force
+
+Dockerfile
+----------
+docker build -t apache:latest .
+docker run -itd -p 8282:80 --name cont_apache apache:latest
+docker exec -it apache:latest /bin/bash
+service apache2 status
+
+docker build -t nginx:latest .
+docker run -itd --rm -p 8383:80 --name cont_ngnix nginx:latest
+docker exec -it nginx:latest /bin/bash
+service nginx status
+
+Docker Containers
+-----------------
+docker container create -it --name apache_A apache:latest
+docker container run -itd --name apache_B -p 8585:80 apache:latest
+docker container start apache_A
+docker container stop apache_A
+docker container restart --time 5 apache_B
+docker container rename apache_B apache_C
+docker container attach apache_A
+docker exec -it apache_C /bin/bash
+docker container rm apache_C
+docker container kill --singnal=SIGTERM apache_C
+docker container prune
+
+docker container create -it --name cc-busybox_A busybox:latest
+docker container run -itd --rm --name cc_busybox-B busybox:latest
+docker container start cc-busybox_A
+docker container stop cc-busybox_A
+docker container restart --time 5 cc-busybox_A
+docker container rename cc-busybox_A cc-busybox_C
+docker container attach cc-busybox_A
+docker exec -it cc-busybox_A pwd
+docker container run -itd --name cont_nginx -p 8080:80/tcp img_expose
+docker container port cc-busybox_A
+docker container rm cc-busybox_A
+docker container rm cont_id1 cont_id2
+docker container kill --singnal=SIGTERM cont_nginx
+docker container prune
+
+Docker Network:
+---------------
+docker network ls
+docker network create --driver bridge my_bridge
+docker network create --driver bridge --subnet=192.168.0.0/16 --ip-range=192.168.5.0/24 my_network_1
+docker network create --driver bridge --subnet=172.30.0.0/16 --ip-range=172.30.5.0/24 my_network_2
+docker container run -itd --name apache_NA --network my_network_1  -p 8881:80 apache:latest
+docker container run -itd --name ngnix_NA --network my_network_1  -p 8882:80 ngnix:latest
+docker container run -itd --name apache_NB --network my_network_2  -p 8883:80 apache:latest
+docker container run -itd --name ngnix_NB --network my_network_2  -p 8884:80 ngnix:latest
+docker exec -it apache_NA /bin/bash
+apt-get install iputils-ping
+ping 192.168.5.1
+ping 192.168.5.2
+ping 172.30.5.1
+ping 172.30.5.2
+docker exec -it apache_NB /bin/bash
+docker inspect my_network_1
+docker inspect my_network_2
+
+docker network ls --filter driver=bridge
+docker network connect my_bridge_1 my_ubuntu
+docker container inspect my_ubuntu
+docker network inspect bridge
+docker network inspect --format "{{.Scope}}" bridge
+docker network disconnect my_bridge_1 my_ubuntu
+
+Docker Storage:
+---------------
+docker volume create my_volume
+docker volume ls
+docker run -d --volume my_volume:/tmp apache
+docker volume ls --filter "dangling=true"
+docker volume inspect my_volume
+docker volume rm my_volume
+
+Docker compose:
+---------------
+docker-compose up -d
+docker-compose config
+docker-compose config --services
+docker-compose images
+docker-compose logs --tail=10
+docker-compose ps
+docker-compose top
+docker-compose down
+docker-compose version 
+
+Docker Swarm:
+-------------
+docker-machine version
+docker-machine create --driver virtualbox manager
+docker swarm init --advertise-addr <ip-addr>
+docker service ls
+docker service ps <name>
+docker service create <name> <image-name>
+docker service rm <name>
+docker service scale <name>=5
+docker swarm leave --force
+
+docker node ls
+docker node ps
+docker node rm <id>
+docker service create --name "word-app" -p 9001:80 wordpress
+docker service create --name "wordpress-app" -p 9001:80 --mode global wordpress
+docker service create --name "wordpress-app" -p 9001:80 --replicas wordpress
+docker service scale wordpress-app=5
+docker node update --availability drain Manager-1
+
+sudo scp -i /home/ubuntu/My-Connection.pem /tmp/img_apache.tar ubuntu@172.16.0.64:/tmp
+docker load -i /tmp/img_apache.tar

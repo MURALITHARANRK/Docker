@@ -1,0 +1,40 @@
+Docker Commands
+----------------------
+docker pull
+docker image pull nginx:latest
+docker image pull -all-tags nginx
+docker image push image_name
+docker run
+docker images
+docker ps
+docker ps -a
+docker build -t image_name:tag .
+docker run --name "container name" -p host_port:container_port imagename:tag
+docker start container_id
+docker stop container_id
+docker restart container_id
+docker rm container_id
+docker rmi image_id --force
+docker container prune
+docker container ill --signal=SIGTERM cont_nginx
+
+docker cp <containerId>:/file/path/within/container /host/path/target
+
+docker inspect container_id
+docker image inspect --format "{{.RepoTags}} : {{.RepoDigests}} " ubuntu:latest
+docker image inspect --format "{{json .Config}}" ubuntu > instpect_report_ubuntu.txt
+
+docker logs container_id
+docker history container_id or image_name
+docker commit container_id new_image_name
+touch Dockerfile
+docker build -t new_image_name .
+docker build -t new_image_name . --no-cache=true
+docker push new_image_name
+docker search python:3.6
+docker search registry --filter "is-official=true"
+docker seach --format "table {{.Name}}\t{{.description}}\t{{.isofficial}}" registry
+
+docker login
+docker network create --driver bridge my-bridge
+docker network create --driver bridge --subnet=192.168.0.0./16 
